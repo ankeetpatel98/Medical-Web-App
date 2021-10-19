@@ -1,0 +1,605 @@
+<!-- Created By: Elias Enamorado  -->
+<!-- Assignment: Project-->
+<!DOCTYPE html> 
+<html>
+	<head>
+		 <title>Central ICU Patient eHealth and eMonitoring System</title>  
+
+
+		 <!-- required scripts-->
+		 <meta charset="utf-8">  <meta name="viewport" content="width=device-width, initial-scale=1">  
+		 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>  
+		 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>  
+		 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		 <script src="VitalSigns.js"></script>
+		 <script src="MainUI.js"></script>
+		 
+		 <!-- Common CSS-->
+		 <style>
+			 body 
+			 {
+			
+				overflow-x: hidden;
+			}
+			 .topRowButton
+			 {
+				display: table-cell; 
+				width: 100%; 
+				outline: none; 
+				background-color: transparent; 
+				border: none;  
+				height: 100%;
+				font-size: 28px;
+			 }
+			 .sideDiv
+			 {
+				width: 100%; 
+				height: 130px;
+			 }
+			 .sideButton{
+				display: table-cell; 
+				width: 100%; 
+				outline: none; 
+				background-color: rgb(230,230,250, 1); 
+				border: none; 
+				height: 100%;
+			 }
+
+			 .cas
+			 {
+				 border: none;
+			 }
+		 </style>
+	</head>
+	<body> 
+	
+	
+		<!-- top button to change machine screen -->
+		<div class=".container-fluid" id="mainForm">	
+			<div class="row" style="height: 100px;"> 
+				<div class="col-sm-3" style="background-color: azure; padding: 0;">
+					<button type="button" class="vitalSigns topRowButton" > Vital Signs </button>
+				</div>
+				<div class="col-sm-3" style="background-color: rgb(255,234,148); padding: 0;">
+					<button type="button" class="ventilator topRowButton"> Ventilator </button>
+				</div>
+				<div class="col-sm-3" style="background-color: rgb(165,203,239); padding: 0;">
+					<button type="button" class="patientInformation topRowButton" > Patient Information </button>
+				</div>
+				<div class="col-sm-3" style="background-color: rgb(255,169,168); padding: 0;">
+					<button type="button" class="xrays topRowButton" > X-Rays </button>
+				</div>
+			</div>
+		</div>
+		<!-- side buttons to change patient information -->
+		<div class=".container-fluid" id="patientForm">
+			<div class="row" style="height: 650px;" >
+				<div class="col-sm-3" style="background-color: blue; height: 100%; margin: 0%; padding: 0%;">
+					<div class="sideDiv" >
+						<button type="button" id="gw" class="sideButton">George Washington</button>
+					</div>
+					<div class="sideDiv" >
+						<button type="button"  id="ja" class="sideButton">John Adams</button>
+					</div>
+					<div class="sideDiv" >
+						<button type="button" id="tj"  class="sideButton">Thomas Jefferson</button>
+					</div>
+					<div class="sideDiv" >
+						<button type="button" id="jmn" class="sideButton">James Madison</button>
+					</div>
+					<div class="sideDiv">
+						<button type="button" id="jme" class="sideButton">James Moore</button>
+					</div>
+				</div>
+
+				<!-- main display that gets over written-->
+				<div id="mainDisplay" class="col-sm-9" style="height: 100%;">
+					<!--DO NOT EDIT THIS, ANYTHING THAT YOU CREATE HERE WILL BE OVERRIDE IMMEDIATELY, EDIT YOUR STATED TAG!-->
+					
+
+				</div>
+			</div>
+		</div>
+
+		<!-- random objects that help keep track of program state -->
+		<div class=".container-fluid" id="loginForm">
+			<div class="row">
+				<div class="col-sm-3" style="margin: 0%; padding: 0%;">
+					<!-- button to see if nurse/physician is logged in -->
+					<div>
+						<button type="button" id="login" style=" display: table-cell; outline: none; background-color: rgb(192,192,192); border: none; height: 187px; width:100%; font-size: 50px;" value="n">Nurse</button>
+					</div>
+
+				</div>
+
+				<!-- radio buttons to know what section is currently being chosen-->
+				<div class="col-sm-9">
+					<div style="visibility: hidden;">
+						<input type="radio" id="vs"
+							   name="option" value="vs">
+						<label for="contactChoice1">Vital Signs</label>
+						<input type="radio" id="vt"
+							   name="option" value="vt">
+						<label for="contactChoice2">Ventilator</label>
+						<input type="radio" id="pi"
+							   name="option" value="pi">
+						<label for="contactChoice3">Patient Information</label>
+						<input type="radio" id="xr"
+							   name="option" value="xr">
+						<label for="contactChoice3">X-Rays</label>
+					  </div>
+					  <!-- radio section to know what patient is currently chosen -->
+					  <div style="visibility: hidden;">
+						<input type="radio" id="gw1"
+							   name="patientOption" value="gw">
+						<label for="contactChoice1">George Washington</label>
+						<input type="radio" id="ja1"
+							   name="patientOption" value="ja">
+						<label for="contactChoice2">John Adams</label>
+						<input type="radio" id="tj1"
+							   name="patientOption" value="tj">
+						<label for="contactChoice3">Thomas Jefferson</label>
+						<input type="radio" id="jmn1"
+							   name="patientOption" value="jmn">
+						<label for="contactChoice3">James Madison</label>
+						<input type="radio" id="jme1"
+							   name="patientOption" value="jme">
+						<label for="contactChoice3">James Moore</label>
+					  </div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+
+<script>
+
+//functions to perform when the page has loaded
+$(document).ready(function()
+{
+	var db = {};
+	db["gw"] = {NAME:"George Washington", XRAYS:"3", AP:"100", ABR:"5", SUPPORT:"c", DOB:"02/22/1732", SEX:"M", ADD:"1600 Pennsylvania Ave NW, Washington, DC 20500", WEIGHT:"175", HEIGHT:"188", CS:"Healty", MED:"None", INCD:"None", HIS:"None"}
+	db["ja"] = {NAME:"John Adams", 		  XRAYS:"2", AP:"110", ABR:"4",	SUPPORT:"a", DOB:"10/30/1735", SEX:"M", ADD:"1600 Pennsylvania Ave NW, Washington, DC 20500", WEIGHT:"150", HEIGHT:"170", CS:"Healty", MED:"None", INCD:"None", HIS:"None"}
+	db["tj"] = {NAME:"Thomas Jefferson",  XRAYS:"5", AP:"140", ABR:"1", SUPPORT:"s", DOB:"04/13/1743", SEX:"M", ADD:"1600 Pennsylvania Ave NW, Washington, DC 20500", WEIGHT:"174", HEIGHT:"189", CS:"Healty", MED:"None", INCD:"None", HIS:"None"}
+	db["jmn"] = {NAME:"James Madison",    XRAYS:"1", AP:"130", ABR:"2",	SUPPORT:"a", DOB:"03/16/1751", SEX:"M", ADD:"1600 Pennsylvania Ave NW, Washington, DC 20500", WEIGHT:"100", HEIGHT:"163", CS:"Healty", MED:"None", INCD:"None", HIS:"None"}
+	db["jme"] = {NAME:"James Moore",      XRAYS:"4", AP:"120", ABR:"3",	SUPPORT:"s", DOB:"04/28/1758", SEX:"M", ADD:"1600 Pennsylvania Ave NW, Washington, DC 20500", WEIGHT:"189", HEIGHT:"183", CS:"Healty", MED:"None", INCD:"None", HIS:"None"}
+	
+	window.EcgData=[ "905,923,950,979,997,1033,1090,1157,1232,1320,1398,1495,1613,1736,1866,2011,2170,2331,2499,2683,2880,3085,3291,3490,3689,3906,4123,4320,4503,4671,4815,4946,5048,5121,5172,5197,5195,5173,5111,5024,4924,4792,4637,4469,4283,4081,3878,3674,3451,3230,3018,2819,2606,2403,2213,2031,1868,1723,1558,1396,1254,1101,921,726,497,251,1,-280,-585,-858,-1058,-1159,-1133,-946,-546,170,1225,2521,3993,5614,7314,9024,10649,11994,12978,13593,13841,13662,13084,12019,10582,8884,7036,5148,3310,1609,111,-1032,-1871,-2389,-2648,-2674,-2518,-2206,-1825,-1410,-1002,-615,-255,56,298,467,612,732,844,939,1010,1088,1174,1268,1353,1447,1537,1631,1758,1874,2010,2148,2287,2443,2607,2771,2931,3111,3280,3465,3660,3837,4028,4239,4444,4650,4851,5053,5268,5491,5683,5879,6068,6248,6415,6565,6699,6844,6993,7129,7251,7361,7458,7537,7581,7577,7544,7485,7404,7306,7190,7055,6920,6783,6637,6478,6295,6106,5905,5708,5498,5279,5050,4817,4590,4364,4138,3910,3680,3480,3272,3068,2868,2674,2486,2310,2145,1963,1786,1634,1500,1374,1256,1138,1021,921,849,771,684,615,557,510,465,426,384,353,333,312,288,272,272,275,282,287,290,291,294,300,306,304,306,304,311,313,316,318,311,309,308,316,312,316,320,323,331,341,340,340,346,354,373,394,413,432,458,473,494,512,513,519,519,520,525,531,536,538,541,537,541,544,542,551,553,551,554,568,587,607,630,648,672,697,721,732,734,735,740,743,739,743,747,744,748,748,753,751,750,751,750,757,766,786,802,823,846,864"];
+    window.newPatient = false;
+	window.justLoaded= true; 
+	
+	var JSONObject = JSON.stringify(db);
+	localStorage.setItem("localDB", JSONObject);
+
+	
+
+	$(".vitalSigns").click();
+	$('#gw').click();
+	updateVitals();
+	
+	
+    
+	
+	
+	
+})
+
+
+
+
+$('.patientInformation').on('click', function(){
+	$("#pi").prop("checked", true);
+	$('body').css("background-color","rgb(165,203,239)");
+    $('#mainDisplay').hide();
+	$('#mainDisplay').html('<div class="row"><div class="col-4">Personal Information:<p id="dob" style="font-size: 1.2em;">Date of Birth: </p><p id="sex" style="font-size: 1.2em;">Sex: </p><p id="addy" style="font-size: 1.2em;">Address: </p><p id="weight" style="font-size: 1.2em;">Weight: </p><p id="height" style="font-size: 1.2em;">Height: </p>Medical Information:<p id="cs" style="font-size: 1.2em;">Current Situation: </p><br><p id="his" style="font-size: 1.2em;">Medical History: </p><br><br><br><p id="meds" style="font-size: 1.2em;">Medication: </p><br><br><br><p id="incd" style="font-size: 1.2em;">Incidents: </p></div><div class="col-4"><br><p><input type="text" id="chDOB"></p><p><input type="text" id="chSEX"></p><p><input type="text" id="chAddy"></p><p><input type="text" id="chWEI"><p><input type="text" id="chHEI"><br><br><p><input type="text" id="chCS"></p><br><p><input type="text" id="chHIS"></p><br><br><br><p><input type="text" id="chMED"><br><br><br><br><p><input type="text" id="chINCD"></p><button type="button" id="chAll">Save Changes</div></div>')
+	.fadeIn()
+
+	var radioValue = $("input[name='patientOption']:checked").val();
+	loadAnkeetsInfo(radioValue);	
+});
+
+
+
+function loadAnkeetsInfo(patient)
+{
+	var radioValue = $("input[name='option']:checked").val();
+	if(radioValue == "pi"){
+		document.getElementById("dob").value = "";
+		document.getElementById("sex").value = "";
+		document.getElementById("addy").value = "";
+		document.getElementById("weight").value = "";
+		document.getElementById("height").value = "";
+		document.getElementById("cs").value = "";
+		document.getElementById("his").value = "";
+		document.getElementById("meds").value = "";
+		document.getElementById("incd").value = "";
+
+
+		var JSONObject = localStorage.getItem("localDB");
+		var JSObject = JSON.parse(JSONObject);
+
+		var dobVal = "Date of Birth: " + JSObject[patient].DOB;
+		$("#dob").html(dobVal)
+
+		var sxValue = "Sex: " + JSObject[patient].SEX;
+		$("#sex").html(sxValue)
+
+		var addValue = "Address: " + JSObject[patient].ADD;
+		$("#addy").html(addValue)
+
+		var weiValue = "Weight: " + JSObject[patient].WEIGHT;
+		$("#weight").html(weiValue)
+
+		var heiValue = "Height: " + JSObject[patient].HEIGHT;
+		$("#height").html(heiValue)
+
+		var csValue = "Current Situation: " + JSObject[patient].CS;
+		$("#cs").html(csValue)
+
+		var hisValue = "Medical History: " + JSObject[patient].HIS;
+		$("#his").html(hisValue)
+
+		var medValue = "Medication: " + JSObject[patient].MED;
+		$("#meds").html(medValue)
+
+		var indcValue = "Incidents: " + JSObject[patient].INCD;
+		$("#incd").html(indcValue)
+	}
+	
+}
+
+$(document).on('click', '#chAll', function(){
+	
+	var text1 = document.getElementById("chDOB").value;
+	var text2 = document.getElementById("chSEX").value;
+	var text3 = document.getElementById("chAddy").value;
+	var text4 = document.getElementById("chWEI").value;
+	var text5 = document.getElementById("chHEI").value;
+	var text6 = document.getElementById("chCS").value;
+	var text7 = document.getElementById("chHIS").value;
+	var text8 = document.getElementById("chMED").value;
+	var text9 = document.getElementById("chINCD").value;
+
+	if($("#login").val() == "p"){
+		if(text1.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			db[radioValue].DOB = text1; 
+			var JSONObject = JSON.stringify(db);
+			localStorage.setItem("localDB", JSONObject);
+			var cpValue = "Date of Birth: " + db[radioValue].DOB;
+			$("#dob").html(cpValue)
+		}
+		if(text2.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			db[radioValue].SEX = text2; 
+			var JSONObject = JSON.stringify(db);
+			localStorage.setItem("localDB", JSONObject);
+			var cpValue = "Sex: " + db[radioValue].SEX;
+			$("#sex").html(cpValue)
+		}
+		if(text3.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			db[radioValue].ADD = text3; 
+			var JSONObject = JSON.stringify(db);
+			localStorage.setItem("localDB", JSONObject);
+			var cpValue = "Address: " + db[radioValue].ADD;
+			$("#addy").html(cpValue)
+		}
+
+		if(text4.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			db[radioValue].WEIGHT = text4; 
+			var JSONObject = JSON.stringify(db);
+			localStorage.setItem("localDB", JSONObject);
+			var cpValue = "Weight: " + db[radioValue].WEIGHT;
+			$("#weight").html(cpValue)
+		}
+
+		if(text5.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			db[radioValue].HEIGHT = text5; 
+			var JSONObject = JSON.stringify(db);
+			localStorage.setItem("localDB", JSONObject);
+			var cpValue = "Height: " + db[radioValue].HEIGHT;
+			$("#height").html(cpValue)
+		}
+
+		if(text6.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			db[radioValue].CS = text6; 
+			var JSONObject = JSON.stringify(db);
+			localStorage.setItem("localDB", JSONObject);
+			var cpValue = "Current Situation: " + db[radioValue].CS;
+			$("#cs").html(cpValue)
+		}
+
+		if(text7.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			if(db[radioValue].HIS == "None"){
+				db[radioValue].HIS = text7; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Medical History: " + db[radioValue].HIS;
+				$("#his").html(cpValue)
+			}
+			else{
+				if(text7 == "None"){
+					db[radioValue].HIS = text7; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Medical History: " + db[radioValue].HIS;
+					$("#his").html(cpValue)
+				}
+				else{
+					db[radioValue].HIS = db[radioValue].HIS + ", " + text7; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Medical History: " + db[radioValue].HIS;
+					$("#his").html(cpValue)
+				}
+			}
+		}
+
+		if(text8.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			if(db[radioValue].MED == "None"){
+				db[radioValue].MED = text8; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Medication: " + db[radioValue].MED;
+				$("#meds").html(cpValue)
+			}
+			else{
+				if(text7 == "None"){
+					db[radioValue].MED = text8; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Medication: " + db[radioValue].MED;
+					$("#meds").html(cpValue)
+				}
+				else{
+					db[radioValue].MED = db[radioValue].MED + ", " + text8; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Medication: " + db[radioValue].MED;
+					$("#meds").html(cpValue)
+				}
+			}
+		}
+
+		if(text9.length > 0)
+		{
+			var JSONObject = localStorage.getItem("localDB");
+			var db = JSON.parse(JSONObject);
+			var radioValue = $("input[name='patientOption']:checked").val();
+			if(db[radioValue].INCD == "None"){
+				db[radioValue].INCD = text9; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Incidents: " + db[radioValue].INCD;
+				$("#incd").html(cpValue)
+			}
+			else{
+				if(text7 == "None"){
+					db[radioValue].INCD = text9; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Incidents: " + db[radioValue].INCD;
+					$("#incd").html(cpValue)
+				}
+				else{
+					db[radioValue].INCD = db[radioValue].INCD + ", " + text9; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Incidents: " + db[radioValue].INCD;
+					$("#incd").html(cpValue)
+				}
+			}
+		}
+	}
+	else{
+		var change = confirm("Do you approve of these changes?");
+		if (change == true){
+			if(text1.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				db[radioValue].DOB = text1; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Date of Birth: " + db[radioValue].DOB;
+				$("#dob").html(cpValue)
+			}
+			if(text2.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				db[radioValue].SEX = text2; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Sex: " + db[radioValue].SEX;
+				$("#sex").html(cpValue)
+			}
+			if(text3.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				db[radioValue].ADD = text3; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Address: " + db[radioValue].ADD;
+				$("#addy").html(cpValue)
+			}
+
+			if(text4.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				db[radioValue].WEIGHT = text4; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Weight: " + db[radioValue].WEIGHT;
+				$("#weight").html(cpValue)
+			}
+
+			if(text5.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				db[radioValue].HEIGHT = text5; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Height: " + db[radioValue].HEIGHT;
+				$("#height").html(cpValue)
+			}
+
+			if(text6.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				db[radioValue].CS = text6; 
+				var JSONObject = JSON.stringify(db);
+				localStorage.setItem("localDB", JSONObject);
+				var cpValue = "Current Situation: " + db[radioValue].CS;
+				$("#cs").html(cpValue)
+			}
+
+			if(text7.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				if(db[radioValue].HIS == "None"){
+					db[radioValue].HIS = text7; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Medical History: " + db[radioValue].HIS;
+					$("#his").html(cpValue)
+				}
+				else{
+					if(text7 == "None"){
+						db[radioValue].HIS = text7; 
+						var JSONObject = JSON.stringify(db);
+						localStorage.setItem("localDB", JSONObject);
+						var cpValue = "Medical History: " + db[radioValue].HIS;
+						$("#his").html(cpValue)
+					}
+					else{
+						db[radioValue].HIS = db[radioValue].HIS + ", " + text7; 
+						var JSONObject = JSON.stringify(db);
+						localStorage.setItem("localDB", JSONObject);
+						var cpValue = "Medical History: " + db[radioValue].HIS;
+						$("#his").html(cpValue)
+					}
+				}
+			}
+
+			if(text8.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				if(db[radioValue].MED == "None"){
+					db[radioValue].MED = text8; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Medication: " + db[radioValue].MED;
+					$("#meds").html(cpValue)
+				}
+				else{
+					if(text7 == "None"){
+						db[radioValue].MED = text8; 
+						var JSONObject = JSON.stringify(db);
+						localStorage.setItem("localDB", JSONObject);
+						var cpValue = "Medication: " + db[radioValue].MED;
+						$("#meds").html(cpValue)
+					}
+					else{
+						db[radioValue].MED = db[radioValue].MED + ", " + text8; 
+						var JSONObject = JSON.stringify(db);
+						localStorage.setItem("localDB", JSONObject);
+						var cpValue = "Medication: " + db[radioValue].MED;
+						$("#meds").html(cpValue)
+					}
+				}
+			}
+
+			if(text9.length > 0)
+			{
+				var JSONObject = localStorage.getItem("localDB");
+				var db = JSON.parse(JSONObject);
+				var radioValue = $("input[name='patientOption']:checked").val();
+				if(db[radioValue].INCD == "None"){
+					db[radioValue].INCD = text9; 
+					var JSONObject = JSON.stringify(db);
+					localStorage.setItem("localDB", JSONObject);
+					var cpValue = "Incidents: " + db[radioValue].INCD;
+					$("#incd").html(cpValue)
+				}
+				else{
+					if(text7 == "None"){
+						db[radioValue].INCD = text9; 
+						var JSONObject = JSON.stringify(db);
+						localStorage.setItem("localDB", JSONObject);
+						var cpValue = "Incidents: " + db[radioValue].INCD;
+						$("#incd").html(cpValue)
+					}
+					else{
+						db[radioValue].INCD = db[radioValue].INCD + ", " + text9; 
+						var JSONObject = JSON.stringify(db);
+						localStorage.setItem("localDB", JSONObject);
+						var cpValue = "Incidents: " + db[radioValue].INCD;
+						$("#incd").html(cpValue)
+					}
+				}
+			}
+		}
+		else{
+			alert("Physician has rejected the Changes!")
+		}
+	}
+
+	document.getElementById("chDOB").value = '';
+	document.getElementById("chSEX").value = '';
+	document.getElementById("chAddy").value = '';
+	document.getElementById("chWEI").value = '';
+	document.getElementById("chHEI").value = '';
+	document.getElementById("chCS").value = '';
+	document.getElementById("chHIS").value = '';
+	document.getElementById("chMED").value = '';
+	document.getElementById("chINCD").value = '';
+	
+});
+</script>
+
